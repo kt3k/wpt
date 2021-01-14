@@ -81,9 +81,18 @@ function test_follow_link(tag) {
   }, 'follow hyperlink <'+tag+' href>');
 }
 
-'a, area, link'.split(', ').forEach(function(str) {
+'a, area'.split(', ').forEach(function(str) {
   test_follow_link(str);
 });
+
+async_test(function() {
+  const link = document.createElement('link');
+  const linkIframe = document.createElement('iframe');
+  setup_navigation(link, linkIframe, 'test_dont_follow_link_area', this);
+  linkIframe.onload = this.unreached_func();
+  link.click();
+  setTimeout(() => this.done(), 0);
+}, `don't follow hyperlink <link href>`);
 
 // follow hyperlink with ping attribute
 function test_follow_link_ping(tag) {
